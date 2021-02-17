@@ -1,82 +1,71 @@
---This sets Potato as a reference to the class file
---local background = require("classes.background")
+--======================================================================--
+--== Learn to Type WIP
+--== Caleb and Michael Piercy
+--== Copyright 2021
+--== A little something to help my kids learn their way around a keyboard.
+--======================================================================--
 
-local Letter = require("classes.letterClass")
-local Child = require("classes.childClass")
-local Text = require("classes.textClass")
-local Countdown = require("classes.countdownClass")
+--== Main.lua :set up Memory and debug Functions.
+--== When ready, move to splash screen.
 
-local mainLetter = ""
-local mainChild = ""
-local mainScore = ""
-local mainCountDown = ""
-local timeUnit = 500
---space background
-local bg = display.newImageRect( "assets/img-boardBg.png", 3377, 1462 )
-bg.x = display.contentWidth/2
-bg.y = display.contentHeight/2
-bg:scale(0.5, 0.5)
+--======================================================================--
+--== Game Details
+--== Set up requires, forward references and game settings
+--======================================================================--
 
+--== Local forward references and require files
+local gfm = require( "globalFunctionsMap" )
+local gd = require( "globalData" )
 
-mainScore = Text:new(params)
-mainChild = Child:new({timeUnit = timeUnit})
-mainCountDown = Countdown:new(params)
+--== Global variable references
+--NA
 
-
--- Called when a key event has been received
-local function onKeyEvent( event )
-      local answer = ""
-      if event.phase == "up" then
-            if mainChild.animating == false then
-                  if event.keyName == (mainLetter.letter.text) then
-                        answer = "correct"
-                  else
-                        answer = "incorrect"
-                  end
-
-                  local event = { name="answer", target=mainLetter.letter, params={answer=answer} }
-                  mainLetter.letter:dispatchEvent( event )
-
-                  local event = { name="answer", target=mainChild.image, params={answer=answer} }
-                  mainChild.image:dispatchEvent( event )
-
-            end
-      end
-
-      return false
+--== Game Settings
+local function gameSettings()
+	display.setStatusBar( display.HiddenStatusBar )
+	native.setProperty( "androidSystemUiVisibility", "immersiveSticky" )
+	math.randomseed( os.time() )
+	display.setDefault( "background", 0.3, 0.6, 0.3 )
+	return gfm.changeScene("scenes.splash") -- Tail Call to go to scene once gamesettings are complete
 end
 
-local function addNewLetter()
-      print("adding new letter")
+--======================================================================--
+--== Display Texture Memory
+--== Shows memory usage when initiated
+--======================================================================--
+local function showMemoryUsage()
+	local memoryRect = display.newRect(10, 10, gd.w-20, 100)
+	memoryRect:setFillColor(1, 1, 1, 0.5)
+	memoryRect:setStrokeColor(1, 1, 1, 0.5)
+	memoryRect.anchorX=0
+	memoryRect.anchorY=0
 
-      --This creates a new class object
-      local thisLetter = Letter:new({timeUnit = timeUnit, --[[letters = {"a","s","d","f","j","k","l"}]]})
-      thisLetter:updateLocation({xPos= display.contentWidth/2, yPos= display.contentHeight/2})
-      mainLetter = thisLetter
+	local memUsageText = display.newText( "Memory Usage", 0, 25, native.systemFont, 17 )
+	memUsageText:setTextColor(0.1, 0.1, 0.1)
 
-      local event = { name="reset" }
-      mainCountDown.box:dispatchEvent( event )
+	local textureMemUsageText = display.newText( "Texture Memory Usage", 0, 65, native.systemFont, 17 )
+	textureMemUsageText:setTextColor(0.1, 0.1, 0.1)
+
+	local monitorMem = function()
+
+		collectgarbage()
+		--print( "MemUsage: " .. collectgarbage("count") )
+
+		local textMem = system.getInfo( "textureMemoryUsed" ) / 1048576
+		memUsageText.text = "Memory " .. collectgarbage("count")
+		memUsageText.anchorX = 0
+		memUsageText.anchorY = 0
+		memUsageText.x = 10
+
+		textureMemUsageText.text = "TxMem " .. textMem
+		textureMemUsageText.anchorX = 0
+		textureMemUsageText.anchorY = 0
+		textureMemUsageText.x = 10
+
+	end
+
+	Runtime:addEventListener( "enterFrame", monitorMem )
 end
 
-local function correctAnswer()
-      print("correct answer!")
-      timer.pause(mainCountDown.timer)
-
-      local timer = timer.performWithDelay( timeUnit*3, function()
-            local event = { name="newLetter" }
-            Runtime:dispatchEvent( event )
-            timer.resume(mainCountDown.timer)
-      end )
-
-      local event = { name="increaseScore", target=mainScore.score }
-      mainScore.score:dispatchEvent( event )
-end
-
-
--- Add the key event listener
-Runtime:addEventListener( "key", onKeyEvent )
-Runtime:addEventListener( "correctAnswer", correctAnswer)
-Runtime:addEventListener( "newLetter", addNewLetter)
-local event = { name="newLetter" }
-Runtime:dispatchEvent( event )
-mainCountDown:start()
+--showMemoryUsage()
+gameSettings()

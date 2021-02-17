@@ -58,12 +58,12 @@ function Letter:shake()
 end
 
 function Letter:answer(event)
-
-      if event.params.answer == "correct" then
+      local params = event.params
+      if params.answer == "correct" then
             self.letter.alpha = 1
             self:destroy()
             local event = { name="correctAnswer" }
-            Runtime:dispatchEvent( event )
+            params.scene:dispatchEvent( event )
       else
             self:shake(self.letter)
       end
