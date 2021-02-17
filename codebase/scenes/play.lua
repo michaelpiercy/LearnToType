@@ -41,7 +41,7 @@ function scene:create( event )
   sceneGroup:insert(bg)
 
   mainScore = Text:new(params)
-  mainChild = Child:new({timeUnit = timeUnit})
+  mainChild = Child:new({timeUnit = gd.timeUnit})
   mainCountDown = Countdown:new(params)
 
 end
@@ -125,7 +125,7 @@ function scene:addNewLetter()
       print("adding new letter")
 
       --This creates a new class object
-      local thisLetter = Letter:new({timeUnit = timeUnit, --[[letters = {"a","s","d","f","j","k","l"}]]})
+      local thisLetter = Letter:new({timeUnit = gd.timeUnit, --[[letters = {"a","s","d","f","j","k","l"}]]})
       thisLetter:updateLocation({xPos= display.contentWidth/2, yPos= display.contentHeight/2})
       mainLetter = thisLetter
 
@@ -137,7 +137,7 @@ function scene:correctAnswer()
       print("correct answer!")
       timer.pause(mainCountDown.timer)
 
-      local timer = timer.performWithDelay( timeUnit*3, function()
+      local timer = timer.performWithDelay( gd.timeUnit*3, function()
             local event = { name="addNewLetter" }
             self:dispatchEvent( event )
             timer.resume(mainCountDown.timer)
