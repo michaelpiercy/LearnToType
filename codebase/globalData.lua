@@ -12,7 +12,8 @@ local globalData = {
     isGameOver              = false,
     sessionDetails          = {},
     w                       = display.actualContentWidth,
-    h                       = display.actualContentHeight
+    h                       = display.actualContentHeight,
+    timeUnit                = 500
 }
 
 return globalData
