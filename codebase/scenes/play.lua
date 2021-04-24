@@ -34,10 +34,10 @@ local timeUnit = 500 --Should do to GlobalData
 function scene:create( event )
   -- Code here runs when the scene is first created but has not yet appeared on screen
   local sceneGroup = self.view
-  local bg = display.newImageRect( "assets/img-boardBg.png", 3377, 1462 )
+  local bg = display.newImageRect( "assets/img-boardBg.png", 1920, 1080 )
   bg.x = display.contentWidth/2
   bg.y = display.contentHeight/2
-  bg:scale(0.5, 0.5)
+  --bg:scale(1, 1)
   sceneGroup:insert(bg)
 
   mainScore = Text:new(params)

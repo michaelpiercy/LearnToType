@@ -1,7 +1,7 @@
 application = {
     content = {
-        width = 1688,
-        height = 731,
+        width = 1920,
+        height = 1080,
         scale = "letterbox",
         xAlign = "center",
         yAlign = "center",
