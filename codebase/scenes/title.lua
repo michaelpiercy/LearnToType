@@ -1,6 +1,7 @@
 --======================================================================--
---== Splash Scene - a Composer Scene
---== Shows loading info/animation
+--== Title Scene - a Composer Scene
+--== Shows gameplay options
+--== Two options, Letter-play and Word-play.
 --======================================================================--
 
 --======================================================================--
@@ -14,26 +15,84 @@ local gd = require( "globalData" )
 local gfm = require( "globalFunctionsMap" )
 local scene = composer.newScene()
 
+local Child = require("classes.actionClass")
+
+local mainChild = "" --Should do to GlobalData
+
 --======================================================================--
 --== Scene functions
 --======================================================================--
 
-
 --== create()
 function scene:create( event )
-  -- Code here runs when the scene is first created but has not yet appeared on screen
-
   local sceneGroup = self.view
-
 
   -- Draw background and logo
   --local backgroundImage = gfm.drawImage("assets/img-boyResults.png", gd.w, gd.h, sceneGroup, gd.w/2, gd.h/2)
-  local splashLogo = gfm.drawImage("assets/img-boyResults.png", 1000*0.5, 820*0.5, sceneGroup, gd.w/2, gd.h/2)
+  --local splashLogo = gfm.drawImage("assets/img-boyResults.png", 1000*0.5, 820*0.5, sceneGroup, gd.w/2, gd.h/2)
 
-  --TODO: Add loading bar. When everything is loaded, then move to main menu screen scene...what though, are we loading, exactly? Sprites, scripts etc.
+
+  girl = Child:new({parentScene = sceneGroup, type="girl", direction=-1})
+  girl.image.x = gd.w/2-girl.image.width/2
+  girl.image.y = gd.h/2
+  local event = { name="selected", params={selected = "idea"} }
+  girl.image:dispatchEvent( event )
+
+  self.wordGameText = gfm.drawText{
+      copy = "WORDS",
+      parentScene = sceneGroup,
+      xPos = girl.image.x,
+      yPos = girl.image.y+girl.image.height/1.75,
+      fontsize = 30,
+      color = {r=0,  g=0, b=0}
+  }
+
+
+  boy = Child:new({parentScene = sceneGroup, type="boy"})
+  boy.image.x = gd.w/2+boy.image.width/2
+  boy.image.y = gd.h/2
+  local event = { name="selected", params={selected = "question"} }
+  boy.image:dispatchEvent( event )
+
+  self.lettersGameText = gfm.drawText{
+      copy = "LETTERS",
+      parentScene = sceneGroup,
+      xPos = boy.image.x,
+      yPos = boy.image.y+boy.image.height/1.75,
+      fontsize = 30,
+      color = {r=0,  g=0, b=0}
+  }
+
+  --Add a touch function to the new images
+  function boy:touch(event)
+        if event.phase == "ended" then
+              print("you clicked me!")
+              local event = { name="selected", params={selected = "sparkle"} }
+              self.image:dispatchEvent( event )
+
+              local event = { name="ready", target=scene }
+              local timedClosure = function() scene:dispatchEvent( event ) end
+              local tm = timer.performWithDelay( 1000, timedClosure, 1 )
+        end
+  end
+
+  --Add a touch function to the new images
+  function girl:touch(event)
+        if event.phase == "ended" then
+             print("you clicked me!")
+             local event = { name="selected", params={selected = "sparkle"} }
+             self.image:dispatchEvent( event )
+
+             local event = { name="ready", target=scene }
+             local timedClosure = function() scene:dispatchEvent( event ) end
+             local tm = timer.performWithDelay( 1000, timedClosure, 1 )
+        end
+  end
+
+
 
   self.statusText = gfm.drawText{
-      copy = "Caleb and Michael's Game",
+      copy = "Choose an option to play",
       parentScene = sceneGroup,
       xPos = gd.w/2,
       yPos = gd.h/6,
@@ -45,7 +104,7 @@ end
 --== ready()
 function scene:ready( event )
   scene:removeEventListener( "ready", scene )
-  gfm.changeScene("scenes.title")
+  gfm.changeScene("scenes.play")
 
 end
 
@@ -62,7 +121,10 @@ function scene:show( event )
     -- Code here runs when the scene is entirely on screen
     local event = { name="ready", target=scene }
     local timedClosure = function() scene:dispatchEvent( event ) end
-    local tm = timer.performWithDelay( 2000, timedClosure, 1 )
+    --local tm = timer.performWithDelay( 2000, timedClosure, 1 )
+
+    boy.image:addEventListener("touch", boy)
+    girl.image:addEventListener("touch", girl)
   end
 end
 
