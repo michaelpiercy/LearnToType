@@ -19,6 +19,7 @@ function Word:new (o)
       setmetatable( o, self )
       self.__index = self
       o.alive = true
+      o.parentScene = o.parentScene
       o.timeUnit = o.timeUnit
       o.letters = {}
       o.currentLetter = ""
@@ -81,7 +82,7 @@ function Word:getLetters(params)
       for i = 1, #params.str do
           local c = params.str:sub(i,i)
           print("added ", c, "to word's letter list")
-          local thisLetter = Letter:new({letters = {c}})
+          local thisLetter = Letter:new({letters = {c},parentScene = self.parentScene})
           thisLetter:updateLocation({xPos= display.contentWidth/2+i*150, yPos= display.contentHeight/2})
           print("width:", thisLetter.width)
           table.insert(params.table, thisLetter)
