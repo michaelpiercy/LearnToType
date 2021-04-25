@@ -1,4 +1,5 @@
 local Countdown = {counterUnit = 20, caseType="vertical"}
+local gd = require( "globalData" )
 
 
 function Countdown:new (o)
@@ -9,7 +10,8 @@ function Countdown:new (o)
       o.frame = o:getFrame({o.caseType})
       o.box = o:getBox({o.caseType})
       o.counterUnit = o.counterUnit
-      o.timeUnit = o.box.height*(self.counterUnit/3000)
+      --o.timeUnit = o.box.height*(self.counterUnit/2000)
+      o.timeUnit = 1
       o.box:addEventListener("reset", o)
       o.box:addEventListener("reduce", o)
 
@@ -31,12 +33,17 @@ function Countdown:start()
 end
 
 function Countdown:reduce()
-      
+
       self.box.height = self.box.height-self.timeUnit
-      if self.box.height < 5 then
+      print(self.timeUnit)
+      if self.box.height <= self.timeUnit then
             timer.cancel( self.timer )
             --dispatch lose life event
             print("LOSE LIFE")
+            local scene = gd.sessionDetails.currentScene
+            local event = { name="loseLife", target=scene}
+            local timedClosure = function() scene:dispatchEvent( event ) end
+            local tm = timer.performWithDelay( 1000, timedClosure, 1 )
       end
 end
 

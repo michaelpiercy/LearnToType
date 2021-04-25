@@ -6,6 +6,7 @@ function Letter:new (o)
       setmetatable( o, self )
       self.__index = self
       o.alive = true
+      o.parentScene = o.parentScene
       o.timeUnit = o.timeUnit
       o.letter = o.letter or o:getLetter{caseType = o.caseType, letters = o.letters}
       o.letter:addEventListener( "answer", o )
@@ -49,6 +50,7 @@ function Letter:getLetter (params)
       local letter = display.newText( "_", 100, 100, native.systemFont, 200 )
       letter:setFillColor( 1, 1, 1 )
       letter.alpha = 0.4
+      self.parentScene:insert(letter)
       print("num letters", #params.letters)
       local rand = math.random(1, #params.letters)
       letter.text = params.letters[rand]
