@@ -26,32 +26,6 @@ function Letter:destroy()
       end)
 end
 
-function Letter:getImage (params)
-      local options =
-      {
-          width = 300,
-          height = 300,
-          numFrames = 1,
-          sheetContentWidth = 300,  -- width of original 1x size of entire sheet
-          sheetContentHeight = 300  -- height of original 1x size of entire sheet
-      }
-
-      local data = {
-          {   name="1",   start=1,    count=1,    loopCount = 1}
-
-      }
-
-      local imageSheet = graphics.newImageSheet( "assets/img-letter.png", options )
-
-      local image = display.newSprite( imageSheet, data  )
-      physics.addBody( image, "dynamic", {density=0, friction=0, bounce=0} )
-      image.gravityScale = 0
-      image:setSequence("1")
-      image.isBullet = true
-      --image:scale(0.40, 0.40)
-      return image
-end
-
 function Letter:shake()
 
       print("WRONG!¬!!!!")

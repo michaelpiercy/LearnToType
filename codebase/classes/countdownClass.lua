@@ -31,7 +31,7 @@ function Countdown:start()
 end
 
 function Countdown:reduce()
-      print(self.box.height)
+      
       self.box.height = self.box.height-self.timeUnit
       if self.box.height < 5 then
             timer.cancel( self.timer )
