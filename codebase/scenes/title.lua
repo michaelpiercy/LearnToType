@@ -70,7 +70,7 @@ function scene:create( event )
               local event = { name="selected", params={selected = "sparkle"} }
               self.image:dispatchEvent( event )
 
-              local event = { name="ready", target=scene }
+              local event = { name="ready", target=scene, changeTo="play" }
               local timedClosure = function() scene:dispatchEvent( event ) end
               local tm = timer.performWithDelay( 1000, timedClosure, 1 )
         end
@@ -83,7 +83,7 @@ function scene:create( event )
              local event = { name="selected", params={selected = "sparkle"} }
              self.image:dispatchEvent( event )
 
-             local event = { name="ready", target=scene }
+             local event = { name="ready", target=scene, changeTo="playWords" }
              local timedClosure = function() scene:dispatchEvent( event ) end
              local tm = timer.performWithDelay( 1000, timedClosure, 1 )
         end
@@ -104,7 +104,7 @@ end
 --== ready()
 function scene:ready( event )
   scene:removeEventListener( "ready", scene )
-  gfm.changeScene("scenes.play")
+  gfm.changeScene("scenes."..event.changeTo)
 
 end
 
