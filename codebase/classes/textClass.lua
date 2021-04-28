@@ -6,6 +6,7 @@ function Text:new (o)
       setmetatable( o, self )
       self.__index = self
       o.alive = true
+      o.textValue = o.textValue or "0"
       o.score = o:setText{}
       o.score:addEventListener("increaseScore", o)
       return o
@@ -27,7 +28,7 @@ end
 
 function Text:setText (params)
 
-      local score = display.newText( "0", 100, 100, native.systemFont, 100 )
+      local score = display.newText( self.textValue, 100, 100, native.systemFont, 100 )
       score:setFillColor( 1, 1, 1 )
       score.x, score.y = display.contentWidth/2, display.contentHeight*0.25
       return score

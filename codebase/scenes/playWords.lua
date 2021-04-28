@@ -54,7 +54,7 @@ end
 --== ready()
 function scene:ready( event )
   local sceneGroup = self.view
-  scene:removeEventListener( "ready", scene )
+  gd.sessionDetails.score = mainScore.score
   gfm.changeScene("scenes."..event.changeTo)
 end
 
@@ -65,9 +65,11 @@ function scene:show( event )
 
   local sceneGroup = self.view
   local phase = event.phase
-  gd.sessionDetails.currentScene = self
+
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+    gd.sessionDetails.currentScene = self
+    composer.removeHidden()
 
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
@@ -80,7 +82,6 @@ end
 
 function scene:loseLife(event)
       print("a life has been lost")
-      self:removeEventListener( "loseLife", self )
       local event = { name="ready", target=scene, changeTo="score" }
       local timedClosure = function() scene:dispatchEvent( event ) end
       local tm = timer.performWithDelay( 1000, timedClosure, 1 )

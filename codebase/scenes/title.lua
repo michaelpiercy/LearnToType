@@ -70,7 +70,7 @@ function scene:create( event )
               local event = { name="selected", params={selected = "sparkle"} }
               self.image:dispatchEvent( event )
 
-              local event = { name="ready", target=scene, changeTo="play" }
+              local event = { name="ready", target=scene, changeTo="playLetters" }
               local timedClosure = function() scene:dispatchEvent( event ) end
               local tm = timer.performWithDelay( 1000, timedClosure, 1 )
         end
@@ -103,7 +103,6 @@ end
 
 --== ready()
 function scene:ready( event )
-  scene:removeEventListener( "ready", scene )
   gfm.changeScene("scenes."..event.changeTo)
 
 end
@@ -116,6 +115,7 @@ function scene:show( event )
 
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+    composer.removeHidden()
 
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen

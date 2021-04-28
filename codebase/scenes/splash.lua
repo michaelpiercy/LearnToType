@@ -18,22 +18,15 @@ local scene = composer.newScene()
 --== Scene functions
 --======================================================================--
 
-
---== create()
+--== Scene is created
 function scene:create( event )
-  -- Code here runs when the scene is first created but has not yet appeared on screen
-
   local sceneGroup = self.view
 
-
   -- Draw background and logo
-  --local backgroundImage = gfm.drawImage("assets/img-boyResults.png", gd.w, gd.h, sceneGroup, gd.w/2, gd.h/2)
-  local splashLogo = gfm.drawImage("assets/img-boyResults.png", 1000*0.5, 820*0.5, sceneGroup, gd.w/2, gd.h/2)
+  sceneGroup.splashLogo = gfm.drawImage("assets/img-boyResults.png", 1000*0.5, 820*0.5, sceneGroup, gd.w/2, gd.h/2)
 
-  --TODO: Add loading bar. When everything is loaded, then move to main menu screen scene...what though, are we loading, exactly? Sprites, scripts etc.
-
-  self.statusText = gfm.drawText{
-      copy = "Caleb and Michael's Game",
+  sceneGroup.statusText = gfm.drawText{
+      copy = "Caleb and Michael's Learn to Type Game",
       parentScene = sceneGroup,
       xPos = gd.w/2,
       yPos = gd.h/6,
@@ -44,7 +37,6 @@ end
 
 --== ready()
 function scene:ready( event )
-  scene:removeEventListener( "ready", scene )
   gfm.changeScene("scenes.title")
 
 end
@@ -60,6 +52,9 @@ function scene:show( event )
 
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
+
+    sceneGroup.statusText.alpha = 0.4
+
     local event = { name="ready", target=scene }
     local timedClosure = function() scene:dispatchEvent( event ) end
     local tm = timer.performWithDelay( 2000, timedClosure, 1 )
@@ -87,13 +82,7 @@ end
 function scene:destroy( event )
 
   local sceneGroup = self.view
-  -- Code here runs prior to the removal of scene's view
-  --display:remove(splashLogo)
-  --splashLogo = nil
-
-  display:remove(backgroundImage)
-  backgroundImage = nil
-
+  print("this scene got destroyed")
 
 end
 

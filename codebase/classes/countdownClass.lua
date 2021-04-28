@@ -1,4 +1,10 @@
-local Countdown = {counterUnit = 20, caseType="vertical"}
+--======================================================================--
+--== Countdown Class - a class
+--== Returns an rectangle box with border that shrinks as a determined
+--== time counts down. 
+--======================================================================--
+
+local Countdown = {counterUnit = 10, caseType="vertical"}
 local gd = require( "globalData" )
 
 
@@ -10,8 +16,8 @@ function Countdown:new (o)
       o.frame = o:getFrame({o.caseType})
       o.box = o:getBox({o.caseType})
       o.counterUnit = o.counterUnit
-      --o.timeUnit = o.box.height*(self.counterUnit/2000)
-      o.timeUnit = 1
+      o.timeUnit = o.box.height*(self.counterUnit/2000)
+      --o.timeUnit = 100
       o.box:addEventListener("reset", o)
       o.box:addEventListener("reduce", o)
 

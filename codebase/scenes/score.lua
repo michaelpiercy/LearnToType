@@ -39,7 +39,7 @@ function scene:create( event )
   --bg:scale(1, 1)
   sceneGroup:insert(bg)
 
-  mainScore = Text:new(params)
+  mainScore = Text:new({textValue=gd.sessionDetails.score.text})
   mainChild = Child:new({timeUnit = gd.timeUnit})
 
 end
@@ -60,6 +60,7 @@ function scene:show( event )
 
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+    composer.removeHidden()
 
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen

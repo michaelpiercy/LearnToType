@@ -62,6 +62,8 @@ function scene:show( event )
 
   if ( phase == "will" ) then
     -- Code here runs when the scene is still off screen (but is about to come on screen)
+    gd.sessionDetails.currentScene = self
+    composer.removeHidden()
 
   elseif ( phase == "did" ) then
     -- Code here runs when the scene is entirely on screen
@@ -123,9 +125,9 @@ end
 
 function scene:addNewLetter()
       print("adding new letter")
-
+      local sceneGroup = self.view
       --This creates a new class object
-      local thisLetter = Letter:new({timeUnit = gd.timeUnit, --[[letters = {"a","s","d","f","j","k","l"}]]})
+      local thisLetter = Letter:new({timeUnit = gd.timeUnit, parentScene = sceneGroup --[[letters = {"a","s","d","f","j","k","l"}]]})
       thisLetter:updateLocation({xPos= display.contentWidth/2, yPos= display.contentHeight/2})
       mainLetter = thisLetter
 
