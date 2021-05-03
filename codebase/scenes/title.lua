@@ -9,15 +9,14 @@
 --== Load Composer settings and local forward references
 --======================================================================--
 
----- Local forward references and require files
+---- Local forward references, require files and classes
 local composer = require( "composer" )
+local scene = composer.newScene( )
+
 local gd = require( "globalData" )
 local gfm = require( "globalFunctionsMap" )
-local scene = composer.newScene()
 
 local Child = require("classes.actionClass")
-
-local mainChild = "" --Should do to GlobalData
 
 --======================================================================--
 --== Scene functions
@@ -25,137 +24,149 @@ local mainChild = "" --Should do to GlobalData
 
 --== create()
 function scene:create( event )
-  local sceneGroup = self.view
+      local sceneGroup = self.view
 
-  -- Draw background and logo
-  --local backgroundImage = gfm.drawImage("assets/img-boyResults.png", gd.w, gd.h, sceneGroup, gd.w/2, gd.h/2)
-  --local splashLogo = gfm.drawImage("assets/img-boyResults.png", 1000*0.5, 820*0.5, sceneGroup, gd.w/2, gd.h/2)
+      -- Assign scene name
+      self.name = "Title"
 
+      --Draw Scene Instruction Text
+      self.statusText = gfm.drawText{
+            copy = "Choose an option to play",
+            parentScene = sceneGroup,
+            xPos = gd.w/2,
+            yPos = gd.h/6,
+            fontsize = 30,
+            color = {r=1,  g=1, b=1}
+      }
 
-  girl = Child:new({parentScene = sceneGroup, type="girl", direction=-1})
-  girl.image.x = gd.w/2-girl.image.width/2
-  girl.image.y = gd.h/2
-  local event = { name="selected", params={selected = "idea"} }
-  girl.image:dispatchEvent( event )
+      --Draw Girl Image
+      local girl = Child:new({parentScene = sceneGroup, type="girl", direction=-1})
+      girl.image.x = gd.w/2-girl.image.width/2
+      girl.image.y = gd.h/2
 
-  self.wordGameText = gfm.drawText{
-      copy = "WORDS",
-      parentScene = sceneGroup,
-      xPos = girl.image.x,
-      yPos = girl.image.y+girl.image.height/1.75,
-      fontsize = 30,
-      color = {r=0,  g=0, b=0}
-  }
+      --Add a touch function to the Girl image
+      --This function is triggered when the image is touched
+      --Event Listener is added when the scene is shown
+      function girl:touch(event)
+            if event.phase == "ended" then
+                  --Set Image Sequence
+                  local event = { name="selected", params={selected = "sparkle"} }
+                  self.image:dispatchEvent( event )
 
+                  --Trigger ready event to move scene to Play Words game
+                  local event = { name="ready", target=scene, changeTo="playWords" }
+                  local timedClosure = function() scene:dispatchEvent( event ) end
+                  local tm = timer.performWithDelay( 1000, timedClosure, 1 )
+            end
+      end
 
-  boy = Child:new({parentScene = sceneGroup, type="boy"})
-  boy.image.x = gd.w/2+boy.image.width/2
-  boy.image.y = gd.h/2
-  local event = { name="selected", params={selected = "question"} }
-  boy.image:dispatchEvent( event )
+      --Assign girl object to scene
+      self.girl = girl
 
-  self.lettersGameText = gfm.drawText{
-      copy = "LETTERS",
-      parentScene = sceneGroup,
-      xPos = boy.image.x,
-      yPos = boy.image.y+boy.image.height/1.75,
-      fontsize = 30,
-      color = {r=0,  g=0, b=0}
-  }
+      --Draw Girl Text
+      self.wordGameText = gfm.drawText{
+            copy = "WORDS",
+            parentScene = sceneGroup,
+            xPos = girl.image.x,
+            yPos = girl.image.y+girl.image.height/1.75,
+            fontsize = 30,
+            color = {r=1,  g=1, b=1}
+      }
 
-  --Add a touch function to the new images
-  function boy:touch(event)
-        if event.phase == "ended" then
-              print("you clicked me!")
-              local event = { name="selected", params={selected = "sparkle"} }
-              self.image:dispatchEvent( event )
+      --Draw Boy Image
+      local boy = Child:new({parentScene = sceneGroup, type="boy"})
+      boy.image.x = gd.w/2+boy.image.width/2
+      boy.image.y = gd.h/2
 
-              local event = { name="ready", target=scene, changeTo="playLetters" }
-              local timedClosure = function() scene:dispatchEvent( event ) end
-              local tm = timer.performWithDelay( 1000, timedClosure, 1 )
-        end
-  end
+      --Assign boy object to scene
+      self.boy = boy
 
-  --Add a touch function to the new images
-  function girl:touch(event)
-        if event.phase == "ended" then
-             print("you clicked me!")
-             local event = { name="selected", params={selected = "sparkle"} }
-             self.image:dispatchEvent( event )
+      --Add a touch function to the Boy image
+      --This function is triggered when the image is touched
+      --Event Listener is added when the scene is shown
+      function boy:touch(event)
+            if event.phase == "ended" then
+                  --Set Image Sequence
+                  local event = { name="selected", params={selected = "sparkle"} }
+                  self.image:dispatchEvent( event )
 
-             local event = { name="ready", target=scene, changeTo="playWords" }
-             local timedClosure = function() scene:dispatchEvent( event ) end
-             local tm = timer.performWithDelay( 1000, timedClosure, 1 )
-        end
-  end
+                  --Trigger ready event to move scene to Play Letters game
+                  local event = { name="ready", target=scene, changeTo="playLetters" }
+                  local timedClosure = function() scene:dispatchEvent( event ) end
+                  local tm = timer.performWithDelay( 1000, timedClosure, 1 )
+            end
+      end
 
-
-
-  self.statusText = gfm.drawText{
-      copy = "Choose an option to play",
-      parentScene = sceneGroup,
-      xPos = gd.w/2,
-      yPos = gd.h/6,
-      fontsize = 30,
-      color = {r=0,  g=0, b=0}
-  }
+      --Draw Boy Text
+      self.lettersGameText = gfm.drawText{
+            copy = "LETTERS",
+            parentScene = sceneGroup,
+            xPos = boy.image.x,
+            yPos = boy.image.y+boy.image.height/1.75,
+            fontsize = 30,
+            color = {r=1,  g=1, b=1}
+      }
 end
 
 --== ready()
+--== Parameters: event object
+--== This function is called by an event listener
+--== Purpose: Define what to do when the scene is ready to move on
 function scene:ready( event )
-  gfm.changeScene("scenes."..event.changeTo)
+      gfm.changeScene("scenes."..event.changeTo)
 
 end
 
---== show()
+--== Composer Scene shown
 function scene:show( event )
 
-  local sceneGroup = self.view
-  local phase = event.phase
+      local sceneGroup = self.view
+      local phase = event.phase
 
-  if ( phase == "will" ) then
-    -- Code here runs when the scene is still off screen (but is about to come on screen)
-    composer.removeHidden()
+      if ( phase == "will" ) then
 
-  elseif ( phase == "did" ) then
-    -- Code here runs when the scene is entirely on screen
-    local event = { name="ready", target=scene }
-    local timedClosure = function() scene:dispatchEvent( event ) end
-    --local tm = timer.performWithDelay( 2000, timedClosure, 1 )
+            --Set Boy and Girl Image Sequences
+            local event = { name="selected", params={selected = "idea"} }
+            self.girl.image:dispatchEvent( event )
 
-    boy.image:addEventListener("touch", boy)
-    girl.image:addEventListener("touch", girl)
-  end
+            local event = { name="selected", params={selected = "question"} }
+            self.boy.image:dispatchEvent( event )
+
+      elseif ( phase == "did" ) then
+
+            --Add Event Listeners to Images
+            self.boy.image:addEventListener("touch", self.boy)
+            self.girl.image:addEventListener("touch", self.girl)
+      end
+
+      --Reset scores
+      gd.sessionDetails.score="0"
 end
 
 
---== hide()
+--== Composer Scene hidden
 function scene:hide( event )
 
-  local sceneGroup = self.view
-  local phase = event.phase
+      local sceneGroup = self.view
+      local phase = event.phase
 
-  if ( phase == "will" ) then
-    -- Code here runs when the scene is on screen (but is about to go off screen)
+      if ( phase == "will" ) then
+            --Remove Event Listeners
+            self.boy.image:removeEventListener("touch", self.boy)
+            self.girl.image:removeEventListener("touch", self.girl)
 
-  elseif ( phase == "did" ) then
-    -- Code here runs immediately after the scene goes entirely off screen
+      elseif ( phase == "did" ) then
+            print(self.name .. " scene was hidden")
 
-  end
+      end
 end
 
 
---== destroy()
+--== Composer Scene destroy
 function scene:destroy( event )
 
-  local sceneGroup = self.view
-  -- Code here runs prior to the removal of scene's view
-  --display:remove(splashLogo)
-  --splashLogo = nil
-
-  display:remove(backgroundImage)
-  backgroundImage = nil
-
+      local sceneGroup = self.view
+      print(self.name .. " scene got destroyed")
 
 end
 

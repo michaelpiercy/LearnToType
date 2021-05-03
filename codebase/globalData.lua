@@ -10,7 +10,7 @@ local globalData = {
     gameDetails             = {},
     isGameRunning           = false,
     isGameOver              = false,
-    sessionDetails          = {scene={},score=0},
+    sessionDetails          = {scene={},score="0"},
     w                       = display.actualContentWidth,
     h                       = display.actualContentHeight,
     timeUnit                = 500,

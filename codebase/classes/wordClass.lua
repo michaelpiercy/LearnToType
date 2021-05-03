@@ -1,17 +1,10 @@
 local Letter = require("classes.letterClass")
-
-local Word = {timeUnit = 150, caseType="upper",
-words={
-      "hello",
-      "there",
-      "caleb",
-      "pencil",
-      "mammy",
-      "daddy",
-      "phone",
-      "sellotape",
-      "keyboard"
-}}
+local wordPack = require "assets.wordPack-1"
+local Word = {
+      timeUnit = 150,
+      caseType="upper",
+      words=wordPack
+}
 
 
 function Word:new (o)
@@ -37,7 +30,6 @@ end
 
 
 function Word:destroy()
-      print("destroying")
       local destroyTimer = timer.performWithDelay( self.timeUnit, function()
             self.alive = false
             for i = 1, #self.letters do
@@ -50,11 +42,37 @@ end
 
 function Word:shake()
 
-      print("WRONG!¬!!!!")
+      print("WRONG WORD!¬!!!!")
+
+      --shaking effect
+
+local stage = self.letters[self.currentLetterIndex].letter
+local originalX = stage.x
+local originalY = stage.y
+local moveRightFunction
+local moveLeftFunction
+local rightTrans
+local leftTrans
+local originalTrans
+local shakeTime = 75
+local shakeRange = {min = 10, max = 50}
+local endShake
+
+moveRightFunction = function(event) rightTrans = transition.to(stage, {x = math.random(shakeRange.min,shakeRange.max), y = math.random(shakeRange.min, shakeRange.max), time = shakeTime, delta=true, onComplete=moveLeftFunction}); end
+moveLeftFunction = function(event) leftTrans = transition.to(stage, {x = math.random(shakeRange.min,shakeRange.max)* -1, y = math.random(shakeRange.min,shakeRange.max)* -1, time = shakeTime, delta=true, onComplete=moveRightFunction2}); end
+moveRightFunction2 = function(event) rightTrans = transition.to(stage, {x = math.random(shakeRange.min,shakeRange.max), y = math.random(shakeRange.min, shakeRange.max), time = shakeTime, delta=true, onComplete=moveLeftFunction2}); end
+moveLeftFunction2 = function(event) leftTrans = transition.to(stage, {x = math.random(shakeRange.min,shakeRange.max)* -1, y = math.random(shakeRange.min,shakeRange.max)* -1, time = shakeTime, delta=true, onComplete=endShake}); end
+
+moveRightFunction();
+
+endShake = function(event) originalTrans = transition.to(stage, {x = originalX, y = originalY, time = 0}); end
+
+--end shaking effect
+
 end
 
 function Word:answer(event)
-      print("you rang?")
+
       local params = event.params
       if params.answer == "correct" then
 
@@ -62,12 +80,10 @@ function Word:answer(event)
             self.letters[self.currentLetterIndex].letter.alpha = 1
 
             if self.currentLetterIndex == #self.letters then
-                  print("that's the lot!")
                   self:destroy()
                   local event = { name="correctAnswer" }
                   params.scene:dispatchEvent( event )
             else
-                  print("correctAnswer - what's the next letter?")
                   self.currentLetterIndex = self.currentLetterIndex + 1
             end
 
@@ -81,21 +97,16 @@ function Word:getLetters(params)
 
       for i = 1, #params.str do
           local c = params.str:sub(i,i)
-          print("added ", c, "to word's letter list")
           local thisLetter = Letter:new({letters = {c},parentScene = self.parentScene})
           thisLetter:updateLocation({xPos= display.contentWidth/2+i*150, yPos= display.contentHeight/2})
-          print("width:", thisLetter.width)
           table.insert(params.table, thisLetter)
       end
       return true
 
 end
+
 function Word:getWord (params)
 
-      --TODO: this word object should not be made up of a string, but rather, made up of a collection of letter objects
-      --local word = display.newText( "_", 100, 100, native.systemFont, 200 )
-      --word:setFillColor( 1, 1, 1 )
-      --word.alpha = 0.4
       local word = {}
       print("num of words to choose from:", #params.words)
       local rand = math.random(1, #params.words)

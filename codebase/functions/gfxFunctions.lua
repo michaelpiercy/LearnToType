@@ -19,7 +19,7 @@ local gfxFunctions = {
     end,
 
     drawText = function(args)
-        local newText = display.newText( args.copy or "", 0, 0, "fonts/Winter Snow.ttf", args.fontsize or 19 )
+        local newText = display.newText( args.copy or "", 0, 0, "assets/Winter Snow.ttf", args.fontsize or 19 )
         --local color = {r = args.color.r or 1, g = args.color.g or 0, b = args.color.b or 0}
         local color = args.color or {r = 1, g = 0, b = 0}
         newText:setFillColor(color.r, color.g, color.b)

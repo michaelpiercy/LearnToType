@@ -1,5 +1,7 @@
 settings =
 {
+	--windows = { defaultMode = "fullscreen", },
+
 	orientation =
 	{
 		-- Supported values for orientation:

@@ -1,6 +1,6 @@
 --======================================================================--
 --== Score Scene - a Composer Scene
---== Shows gameplay
+--== Shows score and option to return to title scene
 --======================================================================--
 
 --======================================================================--
@@ -8,21 +8,15 @@
 --== Load Composer settings and local forward references
 --======================================================================--
 
----- Local forward references and require files
+---- Local forward references, require files and classes
 local composer = require( "composer" )
-local gd = require( "globalData" )
-local gfm = require( "globalFunctionsMap" )
 local scene = composer.newScene()
 
-local Letter = require("classes.letterClass")
-local Child = require("classes.childClass")
-local Text = require("classes.textClass")
-local Countdown = require("classes.countdownClass")
+local gd = require( "globalData" )
+local gfm = require( "globalFunctionsMap" )
 
-local mainLetter = "" --Should do to GlobalData
-local mainChild = "" --Should do to GlobalData
-local mainScore = "" --Should do to GlobalData
-local timeUnit = 500 --Should do to GlobalData
+local Child = require("classes.actionClass")
+
 
 --======================================================================--
 --== Scene functions
@@ -31,102 +25,121 @@ local timeUnit = 500 --Should do to GlobalData
 
 --== create()
 function scene:create( event )
-  -- Code here runs when the scene is first created but has not yet appeared on screen
-  local sceneGroup = self.view
-  local bg = display.newImageRect( "assets/img-boardBg.png", 1920, 1080 )
-  bg.x = display.contentWidth/2
-  bg.y = display.contentHeight/2
-  --bg:scale(1, 1)
-  sceneGroup:insert(bg)
 
-  mainScore = Text:new({textValue=gd.sessionDetails.score.text})
-  mainChild = Child:new({timeUnit = gd.timeUnit})
+      local sceneGroup = self.view
+
+      --Draw Background Image
+      local bg = display.newImageRect( "assets/img-boardBg.png", 1920, 1080 )
+      bg.x = display.contentWidth/2
+      bg.y = display.contentHeight/2
+      sceneGroup:insert(bg)
+      self.bg = bg
+
+      --Draw Scene Instruction Text
+      local score = gfm.drawText{
+            copy = "Your Score: " .. gd.sessionDetails.score.text,
+            parentScene = sceneGroup,
+            xPos = gd.w/2,
+            yPos = gd.h/3,
+            fontsize = 100,
+            color = {r=1,  g=1, b=1}
+      }
+      self.score = score
+
+      --Draw Girl Image
+      local girl = Child:new({parentScene = sceneGroup, type="girl", direction=1})
+      girl.image.x = gd.w/2
+      girl.image.y = gd.h/1.75
+
+      --Add a touch function to the Girl image
+      --This function is triggered when the image is touched
+      --Event Listener is added when the scene is shown
+      function girl:touch(event)
+            if event.phase == "ended" then
+
+                  --Trigger ready event to move scene to Play Words game
+                  local event = { name="ready", target=scene, changeTo="title" }
+                  local timedClosure = function() scene:dispatchEvent( event ) end
+                  local tm = timer.performWithDelay( 1000, timedClosure, 1 )
+
+                  --Set Image Sequence
+                  local event = { name="selected", params={selected = "excellent"} }
+                  self.image:dispatchEvent( event )
+            end
+      end
+
+      --Assign girl object to scene
+      self.girl = girl
+
+      --Draw Girl Text
+      self.wordGameText = gfm.drawText{
+            copy = "Play again",
+            parentScene = sceneGroup,
+            xPos = girl.image.x,
+            yPos = girl.image.y+girl.image.height/1.75,
+            fontsize = 30,
+            color = {r=1,  g=1, b=1}
+      }
 
 end
 
 --== ready()
+--== Parameters: event object
+--== This function is called by an event listener
+--== Purpose: Define what to do when the scene is ready to move on
 function scene:ready( event )
-  local sceneGroup = self.view
+      print("supposed to go to title screen after click the girl")
+      gfm.changeScene("scenes."..event.changeTo)
 
 end
 
 
 
---== show()
+--== Composer Scene shown
 function scene:show( event )
 
-  local sceneGroup = self.view
-  local phase = event.phase
+      local sceneGroup = self.view
+      local phase = event.phase
 
-  if ( phase == "will" ) then
-    -- Code here runs when the scene is still off screen (but is about to come on screen)
-    composer.removeHidden()
+      if ( phase == "will" ) then
 
-  elseif ( phase == "did" ) then
-    -- Code here runs when the scene is entirely on screen
+            --Set Boy and Girl Image Sequences
+            local event = { name="selected", params={selected = "question"} }
+            self.girl.image:dispatchEvent( event )
 
-  end
+            --Set score text to session score
+            self.score.text = "Your Score: " .. gd.sessionDetails.score.text
+      elseif ( phase == "did" ) then
+
+            --Add Event Listener to Image
+            self.girl.image:addEventListener("touch", self.girl)
+      end
 end
 
 
---== hide()
+--== Composer Scene hidden
 function scene:hide( event )
 
-  local sceneGroup = self.view
-  local phase = event.phase
+      local sceneGroup = self.view
+      local phase = event.phase
 
-  if ( phase == "will" ) then
-    -- Code here runs when the scene is on screen (but is about to go off screen)
+      if ( phase == "will" ) then
 
-  elseif ( phase == "did" ) then
-    -- Code here runs immediately after the scene goes entirely off screen
+            --Remove Event Listeners
+            self.girl.image:removeEventListener("touch", self.girl)
 
-  end
+      elseif ( phase == "did" ) then
+
+      end
 end
 
 
---== destroy()
+--== Composer Scene destroy
 function scene:destroy( event )
 
-  local sceneGroup = self.view
-  -- Code here runs prior to the removal of scene's view
+      local sceneGroup = self.view
 
 end
-
-
--- Called when a key event has been received
-local function onKeyEvent( event )
-      local answer = ""
-      if event.phase == "up" then
-            if mainChild.animating == false then
-                  if event.keyName == (mainLetter.letter.text) then
-                        answer = "correct"
-                  else
-                        answer = "incorrect"
-                  end
-
-                  local event = { name="answer", target=mainLetter.letter, params={answer=answer, scene=scene} }
-                  mainLetter.letter:dispatchEvent( event )
-
-                  local event = { name="answer", target=mainChild.image, params={answer=answer, scene=scene} }
-                  mainChild.image:dispatchEvent( event )
-
-            end
-      end
-
-      return false
-end
-
-function scene:addNewLetter()
-      print("adding new letter")
-
-      --This creates a new class object
-      local thisLetter = Letter:new({timeUnit = gd.timeUnit, --[[letters = {"a","s","d","f","j","k","l"}]]})
-      thisLetter:updateLocation({xPos= display.contentWidth/2, yPos= display.contentHeight/2})
-      mainLetter = thisLetter
-
-end
-
 
 --======================================================================--
 --== Scene event function listeners
@@ -135,12 +148,8 @@ scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
+scene:addEventListener( "ready", scene )
 
--- Add the key event listener
---Runtime:addEventListener( "key", onKeyEvent )
---scene:addEventListener( "addNewLetter", self)
---scene:addEventListener( "correctAnswer", self)
---
 --======================================================================--
 
 return scene

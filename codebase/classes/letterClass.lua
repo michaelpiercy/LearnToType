@@ -19,7 +19,6 @@ end
 
 
 function Letter:destroy()
-      print("destroying")
       local destroyTimer = timer.performWithDelay( self.timeUnit*3, function()
             self.alive = false
             display.remove(self.letter)
@@ -47,11 +46,10 @@ end
 
 function Letter:getLetter (params)
 
-      local letter = display.newText( "_", 100, 100, native.systemFont, 200 )
+      local letter = display.newText( "_", 100, 100, "assets/Winter Snow.ttf", 200 )
       letter:setFillColor( 1, 1, 1 )
       letter.alpha = 0.4
       self.parentScene:insert(letter)
-      print("num letters", #params.letters)
       local rand = math.random(1, #params.letters)
       letter.text = params.letters[rand]
       return letter

@@ -67,5 +67,5 @@ local function showMemoryUsage()
 	Runtime:addEventListener( "enterFrame", monitorMem )
 end
 
-showMemoryUsage()
+--showMemoryUsage()
 gameSettings()

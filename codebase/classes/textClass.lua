@@ -8,6 +8,7 @@ function Text:new (o)
       o.alive = true
       o.textValue = o.textValue or "0"
       o.score = o:setText{}
+      o.score:addEventListener("resetScore", o)
       o.score:addEventListener("increaseScore", o)
       return o
 end
@@ -15,6 +16,11 @@ end
 function Text:increaseScore(event)
       print("increasing Score!!!!")
       self.score.text = self.score.text + 1
+end
+
+function Text:resetScore(event)
+      print("resetting Score!!!!")
+      self.score.text = "0"
 end
 
 function Text:destroy()

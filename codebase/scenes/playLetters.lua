@@ -10,20 +10,19 @@
 
 ---- Local forward references and require files
 local composer = require( "composer" )
+local scene = composer.newScene()
+
 local gd = require( "globalData" )
 local gfm = require( "globalFunctionsMap" )
-local scene = composer.newScene()
 
 local Letter = require("classes.letterClass")
 local Child = require("classes.childClass")
 local Text = require("classes.textClass")
 local Countdown = require("classes.countdownClass")
 
-local mainLetter = "" --Should do to GlobalData
-local mainChild = "" --Should do to GlobalData
-local mainScore = "" --Should do to GlobalData
-local mainCountDown = "" --Should do to GlobalData
-local timeUnit = 500 --Should do to GlobalData
+local mainLetter = ""
+local mainChild = ""
+local mainCountDown = ""
 
 --======================================================================--
 --== Scene functions
@@ -32,70 +31,99 @@ local timeUnit = 500 --Should do to GlobalData
 
 --== create()
 function scene:create( event )
-  -- Code here runs when the scene is first created but has not yet appeared on screen
-  local sceneGroup = self.view
-  local bg = display.newImageRect( "assets/img-boardBg.png", 1920, 1080 )
-  bg.x = display.contentWidth/2
-  bg.y = display.contentHeight/2
-  --bg:scale(1, 1)
-  sceneGroup:insert(bg)
+      local sceneGroup = self.view
+      self.name = "Play Letters"
 
-  mainScore = Text:new(params)
-  mainChild = Child:new({timeUnit = gd.timeUnit})
-  mainCountDown = Countdown:new(params)
+      local bg = display.newImageRect( "assets/img-boardBg.png", 1920, 1080 )
+      bg.x = display.contentWidth/2
+      bg.y = display.contentHeight/2
+      sceneGroup:insert(bg)
+      self.bg = bg
+
+      local mainScore = Text:new()
+      self.mainScore = mainScore
+      sceneGroup:insert(mainScore.score)
+
+
+      local mainChild = Child:new({timeUnit = gd.timeUnit})
+      sceneGroup:insert(mainChild.image)
+      self.mainChild = mainChild
+
+      mainCountDown = Countdown:new{parentScene = sceneGroup, xPos = 70, yPos = 880, height = 800, time=5}
 
 end
 
+
+--TODO: This should be an event triggered to a listener attached to a global session object instead of to the scene.
 --== ready()
 function scene:ready( event )
-  local sceneGroup = self.view
-
+      local sceneGroup = self.view
+      gd.sessionDetails.score = self.mainScore.score
+      gfm.changeScene("scenes."..event.changeTo)
 end
+
 
 
 
 --== show()
 function scene:show( event )
 
-  local sceneGroup = self.view
-  local phase = event.phase
+      local sceneGroup = self.view
+      local phase = event.phase
 
-  if ( phase == "will" ) then
-    -- Code here runs when the scene is still off screen (but is about to come on screen)
-    gd.sessionDetails.currentScene = self
-    composer.removeHidden()
+      if ( phase == "will" ) then
 
-  elseif ( phase == "did" ) then
-    -- Code here runs when the scene is entirely on screen
-    local event = { name="addNewLetter" }
-    scene:dispatchEvent( event )
+            gd.sessionDetails.currentScene = self
 
-    mainCountDown:start()
-  end
+            local event = { name="resetScore", target=self.mainScore.score }
+            self.mainScore.score:dispatchEvent( event )
+            gd.sessionDetails.score = self.mainScore.score.text
+
+      elseif ( phase == "did" ) then
+            -- Code here runs when the scene is entirely on screen
+            local event = { name="addNewLetter" }
+            scene:dispatchEvent( event )
+
+            mainCountDown:start()
+      end
+end
+
+--TODO: This should be an event triggered to a listener attached to a global session object instead of to the scene.
+function scene:loseLife(event)
+      print("a life has been lost")
+      local event = { name="ready", target=scene, changeTo="score" }
+      local timedClosure = function() scene:dispatchEvent( event ) end
+      local tm = timer.performWithDelay( 1000, timedClosure, 1 )
+
 end
 
 
 --== hide()
 function scene:hide( event )
 
-  local sceneGroup = self.view
-  local phase = event.phase
+      local sceneGroup = self.view
+      local phase = event.phase
 
-  if ( phase == "will" ) then
-    -- Code here runs when the scene is on screen (but is about to go off screen)
+      if ( phase == "will" ) then
+            -- Code here runs when the scene is on screen (but is about to go off screen)
 
-  elseif ( phase == "did" ) then
-    -- Code here runs immediately after the scene goes entirely off screen
+      elseif ( phase == "did" ) then
+            -- Code here runs immediately after the scene goes entirely off screen
+            print(self.name .. " scene was hidden")
 
-  end
+            --Destroy the left over word
+            mainLetter:destroy()
+            --mainLetter = nil
+      end
 end
 
 
 --== destroy()
 function scene:destroy( event )
 
-  local sceneGroup = self.view
-  -- Code here runs prior to the removal of scene's view
+      local sceneGroup = self.view
+      -- Code here runs prior to the removal of scene's view
+      print(self.name .. " scene got destroyed")
 
 end
 
@@ -103,31 +131,35 @@ end
 -- Called when a key event has been received
 local function onKeyEvent( event )
       local answer = ""
+
       if event.phase == "up" then
-            if mainChild.animating == false then
-                  if event.keyName == (mainLetter.letter.text) then
-                        answer = "correct"
-                  else
-                        answer = "incorrect"
-                  end
-
-                  local event = { name="answer", target=mainLetter.letter, params={answer=answer, scene=scene} }
-                  mainLetter.letter:dispatchEvent( event )
-
-                  local event = { name="answer", target=mainChild.image, params={answer=answer, scene=scene} }
-                  mainChild.image:dispatchEvent( event )
-
+            print("The current letter is:", mainLetter)
+            print("Letter pressed was:", event.keyName)
+            if event.keyName == (mainLetter.letter.text) then
+                  answer = "correct"
+            else
+                  answer = "incorrect"
             end
+
+            local event = { name="answer", target=mainLetter.letter, params={answer=answer, scene=scene} }
+            mainLetter.letter:dispatchEvent( event )
+
+            local event = { name="answer", target=scene.mainChild.image, params={answer=answer, scene=scene} }
+            scene.mainChild.image:dispatchEvent( event )
+
+
       end
 
       return false
 end
 
+--TODO: This should be an event triggered to a listener attached to a global session object instead of to the scene.
 function scene:addNewLetter()
       print("adding new letter")
       local sceneGroup = self.view
+
       --This creates a new class object
-      local thisLetter = Letter:new({timeUnit = gd.timeUnit, parentScene = sceneGroup --[[letters = {"a","s","d","f","j","k","l"}]]})
+      local thisLetter = Letter:new({timeUnit = gd.timeUnit, parentScene = sceneGroup--[[letters = {"a","s","d","f","j","k","l"}]]})
       thisLetter:updateLocation({xPos= display.contentWidth/2, yPos= display.contentHeight/2})
       mainLetter = thisLetter
 
@@ -135,6 +167,7 @@ function scene:addNewLetter()
       mainCountDown.box:dispatchEvent( event )
 end
 
+--TODO: This should be an event triggered to a listener attached to a global session object instead of to the scene.
 function scene:correctAnswer()
       print("correct answer!")
       timer.pause(mainCountDown.timer)
@@ -145,8 +178,8 @@ function scene:correctAnswer()
             timer.resume(mainCountDown.timer)
       end )
 
-      local event = { name="increaseScore", target=mainScore.score }
-      mainScore.score:dispatchEvent( event )
+      local event = { name="increaseScore", target=self.mainScore.score }
+      self.mainScore.score:dispatchEvent( event )
 end
 
 --======================================================================--
@@ -156,12 +189,15 @@ scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
+scene:addEventListener( "ready", scene )
+
 
 -- Add the key event listener
 Runtime:addEventListener( "key", onKeyEvent )
 scene:addEventListener( "addNewLetter", self)
 scene:addEventListener( "correctAnswer", self)
---
+scene:addEventListener( "loseLife", self)
+
 --======================================================================--
 
 return scene
