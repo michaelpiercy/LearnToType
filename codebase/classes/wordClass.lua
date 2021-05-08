@@ -2,7 +2,7 @@ local Letter = require("classes.letterClass")
 local wordPack = require "assets.wordPack-1"
 local Word = {
       timeUnit = 150,
-      caseType="upper",
+      caseType="lower",
       words=wordPack
 }
 

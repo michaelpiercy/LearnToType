@@ -14,6 +14,7 @@ local wordPack = {
       "box",
       "grandad",
       "lucas",
-      "television"
+      "television",
+      "kelly"
 }
 return wordPack

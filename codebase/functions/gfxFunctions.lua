@@ -1,7 +1,7 @@
 -- Pseudo-global space
 -- Require into other files as such:
 -- local gfx = require( "gfxFunctions" )
--- Game State Functions table is used to store key value pairs that are useful in multiple files across the game.
+-- Graphics Functions table is used to store key value pairs that are useful in multiple files across the game.
 -- These variables can be altered for the gaming session and will return to their hard-coded start when the game is restarted.
 
 local gd = require( "globalData" )
