@@ -7,6 +7,7 @@
 local gd = require( "globalData" )
 local gsf = require("functions.gsFunctions")
 local gfx = require("functions.gfxFunctions")
+local glf = require("functions.letterFunctions")
 
 local globalFunctionsMap = {
 
@@ -14,6 +15,7 @@ local globalFunctionsMap = {
     drawImage           = gfx.drawImage,
     drawText            = gfx.drawText,
     changeScene         = gsf.changeScene, -- Change Composer Scene
-
+    addNewLetter        = glf.addNewLetter,
+    addNewWord          = glf.addNewWord
 }
 return globalFunctionsMap

@@ -45,9 +45,9 @@ function Countdown:reduce()
       if self.box.height <= self.counterUnits/10 then
             timer.cancel( self.timer )
             --dispatch lose life event
-            print("LOSE LIFE")
+            print("GameOver")
             local scene = gd.sessionDetails.currentScene
-            local event = { name="loseLife", target=scene}
+            local event = { name="gameOver", target=scene}
             local timedClosure = function() scene:dispatchEvent( event ) end
             local tm = timer.performWithDelay( 10, timedClosure, 1 )
       end

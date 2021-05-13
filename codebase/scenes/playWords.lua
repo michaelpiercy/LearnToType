@@ -29,6 +29,34 @@ local mainCountDown = ""
 --== Scene functions
 --======================================================================--
 
+--TODO: This should be an event triggered to a listener attached to a global session object instead of to the scene.
+-- Called when a key event has been received
+local function onKeyEvent( event )
+      local answer = ""
+
+      if event.phase == "up" then
+            print("The current letter is:", mainLetter)
+            print("Letter pressed was:", event.keyName)
+            if event.keyName == (mainLetter) then
+                  answer = "correct"
+            else
+                  answer = "incorrect"
+            end
+
+            local event = { name="answer", target=mainWord.word, params={answer=answer, scene=scene, mainletter=mainletter} }
+            mainWord:answer( event )
+
+            mainLetter = mainWord.letters[mainWord.currentLetterIndex].letter.text
+
+            if scene.mainChild.animating == false then
+                  local event = { name="answer", target=scene.mainChild.image, params={answer=answer, scene=scene} }
+                  scene.mainChild.image:dispatchEvent( event )
+            end
+      end
+
+      return false
+end
+
 --== create()
 function scene:create( event )
       local sceneGroup = self.view
@@ -59,7 +87,18 @@ function scene:ready( event )
       gfm.changeScene("scenes."..event.changeTo)
 end
 
+function scene:reset()
+      --Create a new word to start
+      local event = { name="addNewWord", target = self  }
+      mainWord = scene:dispatchEvent( event )
 
+      --Set the letter from the new word
+      mainLetter = mainWord.letters[mainWord.currentLetterIndex].letter.text
+
+      --Reset and start the timer
+      local event = { name="reset" }
+      mainCountDown.box:dispatchEvent( event )
+end
 
 --== show()
 function scene:show( event )
@@ -77,17 +116,16 @@ function scene:show( event )
 
 
       elseif ( phase == "did" ) then
-            -- Code here runs when the scene is entirely on screen
-            local event = { name="addNewWord" }
-            scene:dispatchEvent( event )
-
+            self:reset()
             mainCountDown:start()
+            Runtime:addEventListener( "key", onKeyEvent )
+
       end
 end
 
 --TODO: This should be an event triggered to a listener attached to a global session object instead of to the scene.
-function scene:loseLife(event)
-      print("a life has been lost")
+function scene:gameOver(event)
+      print("gameOver")
       local event = { name="ready", target=scene, changeTo="score" }
       local timedClosure = function() scene:dispatchEvent( event ) end
       local tm = timer.performWithDelay( 1000, timedClosure, 1 )
@@ -110,9 +148,10 @@ function scene:hide( event )
             --Destroy the left over word
             mainWord:destroy()
             mainWord = nil
+            print(Runtime:removeEventListener( "key", onKeyEvent ))
+
       end
 end
-
 
 --== destroy()
 function scene:destroy( event )
@@ -123,73 +162,13 @@ function scene:destroy( event )
 
 end
 
-
---TODO: This should be an event triggered to a listener attached to a global session object instead of to the scene.
--- Called when a key event has been received
-local function onKeyEvent( event )
-      local answer = ""
-
-      if event.phase == "up" then
-            print("The current letter is:", mainLetter)
-            print("Letter pressed was:", event.keyName)
-            if event.keyName == (mainLetter) then
-                  answer = "correct"
-            else
-                  answer = "incorrect"
-            end
-
-            local event = { name="answer", target=mainWord.word, params={answer=answer, scene=scene, mainletter=mainletter} }
-            mainWord:answer( event )
-
-            mainLetter = mainWord.letters[mainWord.currentLetterIndex].letter.text
-
-            if scene.mainChild.animating == false then
-                  local event = { name="answer", target=scene.mainChild.image, params={answer=answer, scene=scene} }
-                  scene.mainChild.image:dispatchEvent( event )
-            end
-      end
-
-      return false
-end
-
---TODO: This should be an event triggered to a listener attached to a global session object instead of to the scene.
-function scene:addNewWord()
-      print("adding new word")
-      local sceneGroup = self.view
-
-      --This creates a new class object
-      local thisWord = Word:new({timeUnit = gd.timeUnit, parentScene = sceneGroup})
-      thisWord:updateLocation({xPos= #thisWord.letters*75+75, yPos= display.contentHeight/2})
-      mainLetter = thisWord.letters[thisWord.currentLetterIndex].letter.text
-      mainWord = thisWord
-      print(#thisWord.letters*125)
-
-      local event = { name="reset" }
-      mainCountDown.box:dispatchEvent( event )
-end
-
---TODO: This should be an event triggered to a listener attached to a global session object instead of to the scene.
-function scene:addNewLetter()
-      print("adding new letter")
-      local sceneGroup = self.view
-
-      --This creates a new class object
-      local thisLetter = Letter:new({timeUnit = gd.timeUnit, parentScene = sceneGroup--[[letters = {"a","s","d","f","j","k","l"}]]})
-      thisLetter:updateLocation({xPos= display.contentWidth/2, yPos= display.contentHeight/2})
-      mainLetter = thisLetter
-
-      local event = { name="reset" }
-      mainCountDown.box:dispatchEvent( event )
-end
-
 --TODO: This should be an event triggered to a listener attached to a global session object instead of to the scene.
 function scene:correctAnswer()
       print("correct answer!")
       timer.pause(mainCountDown.timer)
 
       local timer = timer.performWithDelay( gd.timeUnit*3, function()
-            local event = { name="addNewWord" }
-            self:dispatchEvent( event )
+            self:reset()
             timer.resume(mainCountDown.timer)
       end )
 
@@ -207,11 +186,10 @@ scene:addEventListener( "destroy", scene )
 scene:addEventListener( "ready", scene )
 
 -- Add the key event listener
-Runtime:addEventListener( "key", onKeyEvent )
-scene:addEventListener( "addNewLetter", self)
-scene:addEventListener( "addNewWord", self)
+scene:addEventListener( "addNewLetter", gfm.addNewLetter)
+scene:addEventListener( "addNewWord", gfm.addNewWord)
 scene:addEventListener( "correctAnswer", self)
-scene:addEventListener( "loseLife", self)
+scene:addEventListener( "gameOver", self)
 
 --======================================================================--
 
