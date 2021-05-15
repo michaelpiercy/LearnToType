@@ -16,6 +16,9 @@ local globalFunctionsMap = {
     drawText            = gfx.drawText,
     changeScene         = gsf.changeScene, -- Change Composer Scene
     addNewLetter        = glf.addNewLetter,
-    addNewWord          = glf.addNewWord
+    addNewWord          = glf.addNewWord,
+    onKeyEvent          = glf.onKeyEvent,
+    correctAnswer       = glf.correctAnswer,
+    gameOver            = glf.gameOver            
 }
 return globalFunctionsMap

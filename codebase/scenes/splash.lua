@@ -19,25 +19,58 @@ local gfm = require( "globalFunctionsMap" )
 --== Scene functions
 --======================================================================--
 
---== Composer Scene created
+--== Composer Scene create()
 function scene:create( event )
-      local sceneGroup = self.view
+   local sceneGroup = self.view
 
-      -- Assign scene name
-      self.name = "Splash"
+   -- Assign scene name
+   self.name = "Splash"
 
-      -- Draw Logo image
-      self.splashLogo = gfm.drawImage("assets/img-boyResults.png", 1000*0.5, 820*0.5, sceneGroup, gd.w/2, gd.h/2)
+   -- Draw Logo image
+   self.splashLogo = gfm.drawImage("assets/img-boyResults.png", 1000*0.5, 820*0.5, sceneGroup, gd.w/2, gd.h/2)
 
-      --Draw Text for game name
-      self.statusText = gfm.drawText{
-            copy = "Caleb and Michael's Learn to Type Game",
-            parentScene = sceneGroup,
-            xPos = gd.w/2,
-            yPos = gd.h/6,
-            fontsize = 50,
-            color = {r=1,  g=1, b=1}
-      }
+   --Draw Text for game name
+   self.statusText = gfm.drawText{
+      copy = "Caleb and Michael's Learn to Type Game",
+      parentScene = sceneGroup,
+      xPos = gd.w/2,
+      yPos = gd.h/6,
+      fontsize = 50,
+      color = {r=1,  g=1, b=1}
+   }
+end
+
+--== Composer Scene show()
+function scene:show( event )
+
+   local sceneGroup = self.view
+   local phase = event.phase
+
+   if ( phase == "did" ) then
+
+      --Trigger the ready event to move to next scene
+      local event = { name="ready", target=scene }
+      local timedClosure = function() scene:dispatchEvent( event ) end
+      local tm = timer.performWithDelay( 2000, timedClosure, 1 )
+   end
+end
+
+--== Composer Scene hide()
+function scene:hide( event )
+
+   local sceneGroup = self.view
+   local phase = event.phase
+
+   if ( phase == "did" ) then
+      print(self.name .. " scene was hidden")
+   end
+end
+
+--== Composer Scene destroy
+function scene:destroy( event )
+
+   local sceneGroup = self.view
+   print(self.name .. " scene got destroyed")
 end
 
 --== ready()
@@ -45,47 +78,8 @@ end
 --== This function is called by an event listener
 --== Purpose: Define what to do when the scene is ready to move on
 function scene:ready( event )
-      gfm.changeScene("scenes.title")
+   gfm.changeScene("scenes.title")
 end
-
---== Composer Scene shown
-function scene:show( event )
-
-      local sceneGroup = self.view
-      local phase = event.phase
-
-      if ( phase == "will" ) then
-
-      elseif ( phase == "did" ) then
-
-            --Trigger the ready event to move to next scene
-            local event = { name="ready", target=scene }
-            local timedClosure = function() scene:dispatchEvent( event ) end
-            local tm = timer.performWithDelay( 2000, timedClosure, 1 )
-      end
-end
-
-
---== Composer Scene hidden
-function scene:hide( event )
-
-      local sceneGroup = self.view
-      local phase = event.phase
-
-      if ( phase == "will" ) then
-      elseif ( phase == "did" ) then
-            print(self.name .. " scene was hidden")
-      end
-end
-
-
---== Composer Scene destroy
-function scene:destroy( event )
-
-      local sceneGroup = self.view
-      print(self.name .. " scene got destroyed")
-end
-
 
 --======================================================================--
 --== Scene event function listeners

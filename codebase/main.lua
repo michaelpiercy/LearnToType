@@ -17,9 +17,6 @@
 local gfm = require( "globalFunctionsMap" )
 local gd = require( "globalData" )
 
---== Global variable references
---NA
-
 --== Game Settings
 local function gameSettings()
 	display.setStatusBar( display.HiddenStatusBar )
@@ -40,10 +37,10 @@ local function showMemoryUsage()
 	memoryRect.anchorX=0
 	memoryRect.anchorY=0
 
-	local memUsageText = display.newText( "Memory Usage", 0, 25, native.systemFont, 17 )
+	local memUsageText = display.newText( "Memory Usage", 0, 25, native.systemFont, 30 )
 	memUsageText:setTextColor(0.1, 0.1, 0.1)
 
-	local textureMemUsageText = display.newText( "Texture Memory Usage", 0, 65, native.systemFont, 17 )
+	local textureMemUsageText = display.newText( "Texture Memory Usage", 0, 65, native.systemFont, 30 )
 	textureMemUsageText:setTextColor(0.1, 0.1, 0.1)
 
 	local monitorMem = function()
@@ -67,5 +64,5 @@ local function showMemoryUsage()
 	Runtime:addEventListener( "enterFrame", monitorMem )
 end
 
---showMemoryUsage()
+showMemoryUsage()
 gameSettings()

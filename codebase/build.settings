@@ -27,21 +27,21 @@ settings =
 	{
 		xcassets = "Images.xcassets",
 		plist =
-            {
+		{
 
-            }
+		}
 	},
 
 	--
 	-- Plugins section
 	--
 	plugins = {
-          ["CoronaProvider.gameNetwork.apple"] =
-          {
-              publisherId = "com.coronalabs"
-          },
+		["CoronaProvider.gameNetwork.apple"] =
+		{
+			publisherId = "com.coronalabs"
+		},
 
-      },
+	},
 
 	--
 	-- Project section

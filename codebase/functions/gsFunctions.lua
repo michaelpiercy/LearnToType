@@ -9,20 +9,20 @@ local composer = require( "composer" )
 
 local gsFunctions = {}
 gsFunctions = {
-    
-    changeScene = function(scene, effect, time, params)
-    	local options = {
-    		effect = effect or "crossFade",
-    		time = time or 1000,
-    		params = params or {}
-    	}
-    	composer.gotoScene( scene, options )
-    end,
 
-    resetGlobalData = function()
-        print("RESETTING DATA")
-        --TODO: List keys and their values that need to be reset. These should be housed in Global Data table.
-    end
+   changeScene = function(scene, effect, time, params)
+      local options = {
+         effect = effect or "crossFade",
+         time = time or 1000,
+         params = params or {}
+      }
+      composer.gotoScene( scene, options )
+   end,
+
+   resetGlobalData = function()
+      print("RESETTING DATA")
+      --TODO: List keys and their values that need to be reset. These should be housed in Global Data table.
+   end
 }
 
 return gsFunctions
