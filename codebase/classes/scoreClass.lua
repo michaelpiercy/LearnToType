@@ -1,6 +1,6 @@
-local Text = {type="score"}
+local Score = {type="score"}
 
-function Text:new (o)
+function Score:new (o)
    local o = o or {}
    setmetatable( o, self )
    self.__index = self
@@ -12,17 +12,17 @@ function Text:new (o)
    return o
 end
 
-function Text:increaseScore(event)
+function Score:increaseScore(event)
    print("increasing Score!!!!")
    self.score.text = self.score.text + 1
 end
 
-function Text:resetScore(event)
+function Score:resetScore(event)
    print("resetting Score!!!!")
    self.score.text = "0"
 end
 
-function Text:destroy()
+function Score:destroy()
    print("destroying Score!!!!")
    local destroyTimer = timer.performWithDelay( 2000, function()
       self.alive = false
@@ -31,7 +31,7 @@ function Text:destroy()
    end)
 end
 
-function Text:getText(params)
+function Score:getText(params)
    --Create text object
    local score = display.newText( self.textValue, 100, 100, native.systemFont, 100 )
    score:setFillColor( 1, 1, 1 )
@@ -39,4 +39,4 @@ function Text:getText(params)
    return score
 end
 
-return Text
+return Score

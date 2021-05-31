@@ -20,8 +20,11 @@ gsFunctions = {
    end,
 
    resetGlobalData = function()
-      print("RESETTING DATA")
-      --TODO: List keys and their values that need to be reset. These should be housed in Global Data table.
+
+      print("Resetting data back to defaults")
+      package.loaded["globalData"] = nil
+      return require( "globalData" )
+
    end
 }
 

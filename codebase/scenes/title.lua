@@ -24,6 +24,7 @@ local Child = require("classes.actionClass")
 
 --== Composer Scene create()
 function scene:create( event )
+
    local sceneGroup = self.view
 
    -- Assign scene name
@@ -40,14 +41,15 @@ function scene:create( event )
    }
 
    --Draw Girl Image
-   local girl = Child:new({parentScene = sceneGroup, type="girl", direction=-1})
-   girl.image.x = gd.w/2-girl.image.width/2
-   girl.image.y = gd.h/2
+   self.girl = Child:new({parentScene = sceneGroup, type="girl", direction=-1})
+   self.girl.image.x = gd.w/2-self.girl.image.width/2
+   self.girl.image.y = gd.h/2
 
    --Add a touch function to the Girl image
    --This function is triggered when the image is touched
    --Event Listener is added when the scene is shown
-   function girl:touch(event)
+   function self.girl:touch(event)
+
       if event.phase == "ended" then
          --Set Image Sequence
          local event = { name="selected", params={selected = "sparkle"} }
@@ -61,34 +63,31 @@ function scene:create( event )
          end
          local tm = timer.performWithDelay( 1000, timedClosure, 1 )
       end
-   end
 
-   --Assign girl object to scene
-   self.girl = girl
+   end
 
    --Draw Girl Text
    self.wordGameText = gfm.drawText{
       copy = "WORDS",
       parentScene = sceneGroup,
-      xPos = girl.image.x,
-      yPos = girl.image.y+girl.image.height/1.5,
+      xPos = self.girl.image.x,
+      yPos = self.girl.image.y+self.girl.image.height/1.5,
       fontsize = 30,
       color = {r=1,  g=1, b=1}
    }
 
    --Draw Boy Image
-   local boy = Child:new({parentScene = sceneGroup, type="boy"})
-   boy.image.x = gd.w/2+boy.image.width/2
-   boy.image.y = gd.h/2
-
-   --Assign boy object to scene
-   self.boy = boy
+   self.boy = Child:new({parentScene = sceneGroup, type="boy"})
+   self.boy.image.x = gd.w/2+self.boy.image.width/2
+   self.boy.image.y = gd.h/2
 
    --Add a touch function to the Boy image
    --This function is triggered when the image is touched
    --Event Listener is added when the scene is shown
-   function boy:touch(event)
+   function self.boy:touch(event)
+
       if event.phase == "ended" then
+
          --Set Image Sequence
          local event = { name="selected", params={selected = "sparkle"} }
          self.image:dispatchEvent( event )
@@ -100,27 +99,33 @@ function scene:create( event )
             scene:dispatchEvent( event )
          end
          local tm = timer.performWithDelay( 1000, timedClosure, 1 )
+
       end
+
    end
 
    --Draw Boy Text
    self.lettersGameText = gfm.drawText{
       copy = "LETTERS",
       parentScene = sceneGroup,
-      xPos = boy.image.x,
-      yPos = boy.image.y+boy.image.height/1.5,
+      xPos = self.boy.image.x,
+      yPos = self.boy.image.y+self.boy.image.height/1.5,
       fontsize = 30,
       color = {r=1,  g=1, b=1}
    }
+
 end
 
 --== Composer Scene show()
 function scene:show( event )
 
-   local sceneGroup = self.view
    local phase = event.phase
 
    if ( phase == "will" ) then
+
+      --Assign the scene
+      gd.sessionDetails.currentScene = self
+      gd.isGameRunning = false
 
       --Set Boy and Girl Image Sequences
       local event = { name="selected", params={selected = "idea"} }
@@ -131,36 +136,40 @@ function scene:show( event )
 
    elseif ( phase == "did" ) then
 
-      --Add Event Listeners to Images
+      --Add Event Listeners to images
+      --Event Listeners are removed when the scene is hidden
       self.boy.image:addEventListener("touch", self.boy)
       self.girl.image:addEventListener("touch", self.girl)
+
    end
 
    --Reset scores
    gd.sessionDetails.score="0"
+
 end
 
 --== Composer Scene hide()
 function scene:hide( event )
 
-   local sceneGroup = self.view
    local phase = event.phase
 
    if ( phase == "will" ) then
+
       --Remove Event Listeners
       self.boy.image:removeEventListener("touch", self.boy)
       self.girl.image:removeEventListener("touch", self.girl)
 
    elseif ( phase == "did" ) then
+
       print(self.name .. " scene was hidden")
 
    end
+
 end
 
 --== Composer Scene destroy()
 function scene:destroy( event )
 
-   local sceneGroup = self.view
    print(self.name .. " scene got destroyed")
 
 end
@@ -170,6 +179,7 @@ end
 --== This function is called by an event listener
 --== Purpose: Define what to do when the scene is ready to move on
 function scene:ready( event )
+
    gfm.changeScene("scenes."..event.changeTo)
 
 end

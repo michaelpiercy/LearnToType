@@ -1,3 +1,5 @@
+local gd = require("globalData")
+
 local Child = {timeUnit = 250, type="boy"}
 
 function Child:new (o)
@@ -67,8 +69,8 @@ function Child:getImage (params)
    local imageSheet = graphics.newImageSheet( "assets/img-boyResults.png", options )
 
    local image = display.newSprite( imageSheet, data  )
-   image.x = display.actualContentWidth - image.width
-   image.y = display.actualContentHeight + image.height
+   image.x = gd.w - image.width
+   image.y = gd.h + image.height
 
    return image
 end

@@ -21,6 +21,7 @@ local gfm = require( "globalFunctionsMap" )
 
 --== Composer Scene create()
 function scene:create( event )
+
    local sceneGroup = self.view
 
    -- Assign scene name
@@ -38,39 +39,49 @@ function scene:create( event )
       fontsize = 50,
       color = {r=1,  g=1, b=1}
    }
+
 end
 
 --== Composer Scene show()
 function scene:show( event )
 
-   local sceneGroup = self.view
    local phase = event.phase
 
-   if ( phase == "did" ) then
+   if ( phase == "will" ) then
+
+      --Assign the scene
+      gd.sessionDetails.currentScene = self
+      gd.isGameRunning = false
+
+   elseif ( phase == "did" ) then
 
       --Trigger the ready event to move to next scene
-      local event = { name="ready", target=scene }
+      local event = { name="ready", target=scene, changeTo="title" }
       local timedClosure = function() scene:dispatchEvent( event ) end
       local tm = timer.performWithDelay( 2000, timedClosure, 1 )
+
    end
+
 end
 
 --== Composer Scene hide()
 function scene:hide( event )
 
-   local sceneGroup = self.view
    local phase = event.phase
 
    if ( phase == "did" ) then
+
       print(self.name .. " scene was hidden")
+
    end
+
 end
 
 --== Composer Scene destroy
 function scene:destroy( event )
 
-   local sceneGroup = self.view
    print(self.name .. " scene got destroyed")
+
 end
 
 --== ready()
@@ -78,7 +89,9 @@ end
 --== This function is called by an event listener
 --== Purpose: Define what to do when the scene is ready to move on
 function scene:ready( event )
-   gfm.changeScene("scenes.title")
+
+   gfm.changeScene("scenes."..event.changeTo)
+
 end
 
 --======================================================================--
