@@ -1,8 +1,9 @@
 -- Pseudo-global space
 -- Require into other files as such:
--- local gsf = require( "gsFunctions" )
--- Game State Functions table is used to store key-value pairs that are useful in multiple files across the game.
--- These functions are referenced in the globalFunctions file.
+-- local gsf = require( "functions.gsFunctions" )
+-- Game State Functions table is used to store functions that are useful in multiple files across the game.
+-- These functions are mapped in the globalFunctionsMap file.
+-- Useful for porting to other systems.
 
 local gd = require( "globalData" )
 local composer = require( "composer" )

@@ -7,8 +7,9 @@
 local globalData = {
 
    gameDetails             = {
-      title               = "Learn to Type",
-      version             = "1.0.0",
+      title                = "Learn to Type",
+      version              = "1.0.0",
+      wordPack             = "assets.wordPack-1"
    },
    isGameRunning           = false,
    isGameOver              = false,

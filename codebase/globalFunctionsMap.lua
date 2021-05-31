@@ -19,6 +19,6 @@ local globalFunctionsMap = {
     addNewWord          = glf.addNewWord,
     onKeyEvent          = glf.onKeyEvent,
     correctAnswer       = glf.correctAnswer,
-    gameOver            = glf.gameOver            
+    gameOver            = glf.gameOver
 }
 return globalFunctionsMap
