@@ -8,95 +8,91 @@
 --== Load Composer settings and local forward references
 --======================================================================--
 
----- Local forward references and require files
+---- Local forward references, require files and classes
 local composer = require( "composer" )
+local scene = composer.newScene()
+
 local gd = require( "globalData" )
 local gfm = require( "globalFunctionsMap" )
-local scene = composer.newScene()
 
 --======================================================================--
 --== Scene functions
 --======================================================================--
 
-
---== create()
+--== Composer Scene create()
 function scene:create( event )
-  -- Code here runs when the scene is first created but has not yet appeared on screen
 
-  local sceneGroup = self.view
+   local sceneGroup = self.view
 
+   -- Assign scene name
+   self.name = "Splash"
 
-  -- Draw background and logo
-  --local backgroundImage = gfm.drawImage("assets/img-boyResults.png", gd.w, gd.h, sceneGroup, gd.w/2, gd.h/2)
-  local splashLogo = gfm.drawImage("assets/img-boyResults.png", 1000*0.5, 820*0.5, sceneGroup, gd.w/2, gd.h/2)
+   -- Draw Logo image
+   self.splashLogo = gfm.drawImage("assets/img-boyResults.png", 1000*0.5, 820*0.5, sceneGroup, gd.w/2, gd.h/2)
 
-  --TODO: Add loading bar. When everything is loaded, then move to main menu screen scene...what though, are we loading, exactly? Sprites, scripts etc.
-
-  self.statusText = gfm.drawText{
-      copy = "Caleb and Michael's Game",
+   --Draw Text for game name
+   self.statusText = gfm.drawText{
+      copy = "Caleb and Michael's Learn to Type Game",
       parentScene = sceneGroup,
       xPos = gd.w/2,
       yPos = gd.h/6,
-      fontsize = 30,
-      color = {r=0,  g=0, b=0}
-  }
+      fontsize = 50,
+      color = {r=1,  g=1, b=1}
+   }
+
+end
+
+--== Composer Scene show()
+function scene:show( event )
+
+   local phase = event.phase
+
+   if ( phase == "will" ) then
+
+      --Assign the scene
+      gd.sessionDetails.currentScene = self
+      gd.isGameRunning = false
+
+   elseif ( phase == "did" ) then
+
+      --Trigger the ready event to move to next scene
+      local event = { name="ready", target=scene, changeTo="title" }
+      local timedClosure = function() scene:dispatchEvent( event ) end
+      local tm = timer.performWithDelay( 2000, timedClosure, 1 )
+
+   end
+
+end
+
+--== Composer Scene hide()
+function scene:hide( event )
+
+   local phase = event.phase
+
+   if ( phase == "did" ) then
+
+      print(self.name .. " scene was hidden")
+
+   end
+
+end
+
+--== Composer Scene destroy
+function scene:destroy( event )
+
+   print(self.name .. " scene got destroyed")
+
 end
 
 --== ready()
+--== Parameters: event object
+--== This function is called by an event listener
+--== Purpose: Define what to do when the scene is ready to move on
 function scene:ready( event )
-  scene:removeEventListener( "ready", scene )
-  gfm.changeScene("scenes.title")
+
+   gfm.changeScene("scenes."..event.changeTo)
 
 end
-
---== show()
-function scene:show( event )
-
-  local sceneGroup = self.view
-  local phase = event.phase
-
-  if ( phase == "will" ) then
-    -- Code here runs when the scene is still off screen (but is about to come on screen)
-
-  elseif ( phase == "did" ) then
-    -- Code here runs when the scene is entirely on screen
-    local event = { name="ready", target=scene }
-    local timedClosure = function() scene:dispatchEvent( event ) end
-    local tm = timer.performWithDelay( 2000, timedClosure, 1 )
-  end
-end
-
-
---== hide()
-function scene:hide( event )
-
-  local sceneGroup = self.view
-  local phase = event.phase
-
-  if ( phase == "will" ) then
-    -- Code here runs when the scene is on screen (but is about to go off screen)
-
-  elseif ( phase == "did" ) then
-    -- Code here runs immediately after the scene goes entirely off screen
-
-  end
-end
-
-
---== destroy()
-function scene:destroy( event )
-
-  local sceneGroup = self.view
-  -- Code here runs prior to the removal of scene's view
-  --display:remove(splashLogo)
-  --splashLogo = nil
-
-  display:remove(backgroundImage)
-  backgroundImage = nil
-
-
-end
-
 
 --======================================================================--
 --== Scene event function listeners

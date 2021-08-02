@@ -5,15 +5,25 @@
 -- These variables can be altered for the current gaming session and will return to their hard-coded values when the game is restarted.
 
 local globalData = {
-    gameTitle               = "Learn to Type",
-    gameVersion             = "0.1.0",
-    gameDetails             = {},
-    isGameRunning           = false,
-    isGameOver              = false,
-    sessionDetails          = {scene={}},
-    w                       = display.actualContentWidth,
-    h                       = display.actualContentHeight,
-    timeUnit                = 500,
+
+   gameDetails             = {
+      title                = "Learn to Type",
+      version              = "1.0.0",
+      wordPack             = "assets.wordPack-1"
+   },
+   isGameRunning           = false,
+   isGameOver              = false,
+   sessionDetails          = {
+      currentScene={},
+      score="0",
+      mode="None Yet",
+      mainLetter={},
+      mainWord={},
+      mainCountDown={}
+   },
+   w                       = display.actualContentWidth,
+   h                       = display.actualContentHeight,
+   timeUnit                = 500
 }
 
 return globalData
