@@ -1,3 +1,8 @@
+--======================================================================--
+--== Word Class - a class
+--== Returns an object with associated word from loaded wordPack.
+--======================================================================--
+
 local Letter = require("classes.letterClass")
 local gd = require( "globalData" )
 
@@ -28,7 +33,7 @@ function Word:updateLocation (params)
    end
 end
 
---Destroy the word and all it's letters
+--Destroy the word and all its letters
 function Word:destroy()
    local destroyTimer = timer.performWithDelay( self.timeUnit, function()
       self.alive = false
@@ -64,6 +69,8 @@ function Word:shake()
 
 end
 
+
+--Called whent the Answer event is triggered on the Word object.
 function Word:answer(event)
 
    local params = event.params

@@ -1,7 +1,13 @@
+--======================================================================--
+--== Score Class - a class
+--== Returns an object with text to display score.
+--== Has two event listeners for resetting and increasing value.
+--======================================================================--
+
 local Score = {}
 
 function Score:new (o)
-   
+
    local o = o or {}
    setmetatable( o, self )
    self.__index = self

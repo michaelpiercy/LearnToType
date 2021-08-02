@@ -1,4 +1,11 @@
-local Child = {timeUnit = 250}
+--======================================================================--
+--== Action Class - a class
+--== Returns an object with boy/girl type imagesheet
+--======================================================================--
+
+local Child = {
+   timeUnit = 250
+}
 
 function Child:new (o)
    local o = o or {}
@@ -68,7 +75,6 @@ function Child:getImage (params)
       {   name="idea",        start=6,    count=1,    loopCount = 1}
    }
 
-   --TODO: TYPE is not used yet but can be used to swap our boy with girl
    local imageSheet = graphics.newImageSheet( "assets/img-"..self.type.."-actions.png", options )
 
    local image = display.newSprite( imageSheet, data  )

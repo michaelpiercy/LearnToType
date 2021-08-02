@@ -1,5 +1,9 @@
-local gd = require("globalData")
+--======================================================================--
+--== Child Class - a class
+--== Returns an object with imagesheet to indicate correct/incorrect
+--======================================================================--
 
+local gd = require("globalData")
 local Child = {timeUnit = 250, type="boy"}
 
 function Child:new (o)
